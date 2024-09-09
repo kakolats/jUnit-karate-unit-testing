@@ -1,6 +1,9 @@
 package me.essejacques.demotestdeploy.integrations;
 
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,12 +15,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
+    @Order(1)
     public void findAllUsers() throws Exception {
         mockMvc.perform(get("/users"))
                 .andExpect( status().isOk())
@@ -29,6 +34,7 @@ public class UserControllerTests {
     }
 
     @Test
+    @Order(2)
     public  void createUser() throws Exception {
         mockMvc.perform(
                 post("/users"  )
@@ -36,6 +42,7 @@ public class UserControllerTests {
                         .content("{" +
                                 "\"name\":\"Kakolats\"," +
                                 "\"email\":\"kakolats@mail.com\"," +
+                                "\"adresse\":\"Sahm\"," +
                                 "\"password\":\"password\"" +
                                 "}")
         )
@@ -44,13 +51,40 @@ public class UserControllerTests {
     }
 
     @Test
+    @Order(3)
     public void getUserById() throws Exception {
-        mockMvc.perform(get("/users/{id}", 1))
+        mockMvc.perform(get("/users/{id}", 3))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(3))
                 .andExpect(jsonPath("$.name").isString())
                 .andExpect(jsonPath("$.adresse").isString())
                 .andExpect(jsonPath("$.password").isString());
+    }
+
+    @Test
+    @Order(4)
+    public void updateUser() throws Exception {
+        mockMvc.perform(put("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "\"id\":1," +
+                                "\"name\":\"Updated Name\"," +
+                                "\"adresse\":\"Updated@gmail.com\"," +
+                                "\"password\":\"updatedpassword\"" +
+                                "}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Updated Name"))
+                .andExpect(jsonPath("$.adresse").value("Updated@gmail.com"))
+                .andExpect(jsonPath("$.password").value("updatedpassword"));
+    }
+
+    @Test
+    @Order(5)
+    public void deleteUser() throws Exception {
+        mockMvc.perform(delete("/users/{id}", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Deletion successful"));
     }
 
 }

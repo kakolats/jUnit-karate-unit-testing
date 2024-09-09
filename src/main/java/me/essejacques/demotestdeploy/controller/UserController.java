@@ -30,4 +30,15 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return  ResponseEntity.ok(userService.saveUser(user));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("Deletion successful");
+    }
+
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        return  ResponseEntity.ok(userService.updateUser(user));
+    }
 }

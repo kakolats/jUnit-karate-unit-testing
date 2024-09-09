@@ -29,6 +29,20 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public User updateUser(User user) {
+        User toModified = fetchUserById(user.getId());
+        int index = users.indexOf(toModified);
+        users.set(index,user);
+        return user;
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        User user = fetchUserById(id);
+        this.users.remove(user);
+    }
+
     /**
      * @param id
      * @return User

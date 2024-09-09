@@ -38,6 +38,24 @@ class UserServiceTests {
     }
 
     @Test
+    public void testUpdateUser() {
+        User updatedUser = new User(1L, "Updated Stephane", "Updated@doe.com", "newpassword123");
+        User resultUser = userService.updateUser(updatedUser);
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, resultUser.getId()),
+                () -> Assertions.assertEquals("Updated Stephane", resultUser.getName()),
+                () -> Assertions.assertEquals("Updated@doe.com", resultUser.getAdresse()),
+                () -> Assertions.assertEquals("newpassword123", resultUser.getPassword())
+        );
+    }
+
+    @Test
+    public void testDeleteUser() {
+        userService.deleteUser(1L);
+        Assertions.assertThrows(RuntimeException.class, () -> userService.fetchUserById(1L));
+    }
+
+    @Test
     public void testFindUserByIdFound() {
         // Assuming you have a method to seed or mock data
         User expectedUser = new User(1L, "Stephane", "Stephane@doe.com", "123456");
